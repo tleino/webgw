@@ -1,0 +1,47 @@
+webgw - Web proxy that enforces whitelisting policy
+
+Webgw is a non-caching http/https proxy server which only lets connections
+to whitelisted hosts pass.
+
+As connection attempts are made, webgw holds the connections, until the
+user unblocks the connection by whitelisting the host. This way a whitelist
+can be built simply by browsing the Web.
+
+Webgw is practically created for the most paranoid Web users, as it makes
+using the Web a little cumbersome, unless one browses only the same sites
+over and over again.
+
+==> WORK IN PROGRESS <==
+
+ - has hardcoded strings like server IP address
+
+ - paths assume necessary files are found from current working
+   directory
+
+Dependencies
+============
+
+Uses kqueue which means this works only on *BSD systems.
+
+No dependency requirements on OpenBSD.
+
+Configure & Install
+===================
+
+./configure ~
+make install
+
+Usage
+=====
+
+webgw &
+
+And then:
+
+ 1. Set browser to use proxy at localhost, port 8081
+
+ 2. Browse the web and see that sites are not loading
+
+ 3. Unblock connections from https://localhost:8080/
+
+ 4. See that sites are loaded

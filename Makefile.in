@@ -1,0 +1,65 @@
+SHELL = /bin/sh
+CFLAGS = -g -Wall -pedantic -std=c99 @PKGS_CFLAGS@ @SYSTEM_CFLAGS@
+LDFLAGS = @SYSTEM_LDFLAGS@ @PKGS_LDFLAGS@
+
+prefix = @prefix@
+exec_prefix = $(prefix)
+bindir = $(exec_prefix)/bin
+datarootdir = $(prefix)/share
+mandir = $(datarootdir)/man
+
+INSTALL ?= install
+INSTALLFLAGS ?= -D
+
+SRCS=	\
+	rules.c \
+	hostdb.c \
+	host.c \
+	dynstr.c \
+	webclient.c \
+	proxyclient.c \
+	client.c \
+	parseline.c \
+	http.c \
+	server.c \
+	webgw.c \
+	tcpbind.c
+PROG=webgw
+MAN=webgw.1
+
+OBJS=$(SRCS:.c=.o)
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) -o$@ $(OBJS) $(LDFLAGS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	rm -f $(OBJS) $(PROG)
+
+install: $(PROG)
+	$(INSTALL) $(INSTALLFLAGS) $(PROG) $(DESTDIR)$(bindir)/$(PROG)
+	$(INSTALL) $(INSTALLFLAGS) -m 444 $(MAN) \
+		$(DESTDIR)$(mandir)/man1/$(MAN)
+
+uninstall:
+	rm -f $(DESTDIR)$(bindir)/$(PROG)
+	rm -f $(DESTDIR)$(mandir)/man1/$(MAN)
+client.o: client.c extern.h config.h client.h host.h
+dynstr.o: dynstr.c dynstr.h
+host.o: host.c host.h
+hostdb.o: hostdb.c hostdb.h host.h
+http.o: http.c extern.h config.h http.h
+parseline.o: parseline.c
+proxyclient.o: proxyclient.c extern.h config.h server.h hostdb.h host.h \
+  rules.h client.h
+rules.o: rules.c rules.h dynstr.h
+server.o: server.c extern.h config.h webclient.h client.h server.h \
+  hostdb.h rules.h
+tcpbind.o: tcpbind.c
+webclient.o: webclient.c extern.h config.h client.h server.h http.h \
+  dynstr.h hostdb.h host.h rules.h
+webgw.o: webgw.c extern.h config.h
