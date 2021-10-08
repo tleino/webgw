@@ -88,7 +88,7 @@ rules_to_data()
 		dynstr_add(&dn, "%s\n", np->pattern);
 
 	if ((s = dynstr_get(&dn)) == NULL)
-		err(1, "dynstr_get");
+		return "";
 
 	p = strdup(s);
 
